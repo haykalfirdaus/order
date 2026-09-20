@@ -125,22 +125,10 @@
         <h2 class="error-title">Oops! Salah Alamat</h2>
         <p class="error-desc">Halaman atau URL yang kamu tuju tidak ditemukan. Pastikan link-nya benar ya!</p>
         
-        <a href="/" class="btn-home">
-            <i class="fa-solid fa-house"></i> Kembali ke Halaman Utama
+        <a href="/order" class="btn-home">
+            <i class="fa-solid fa-cart-shopping"></i> Kembali ke Halaman Order
         </a>
     </div>
 
-    <script>
-        // Fallback script jika href="/" tidak mengarah ke file yang tepat (jika diload via lokal tanpa server)
-        document.querySelector('.btn-home').addEventListener('click', function(e) {
-            if (window.location.protocol === 'file:') {
-                e.preventDefault();
-                // Mengarahkan kembali ke file index.html di folder yang sama
-                const pathArray = window.location.pathname.split('/');
-                pathArray.pop(); 
-                window.location.href = pathArray.join('/') + '/index.html';
-            }
-        });
-    </script>
 </body>
 </html>
