@@ -325,20 +325,6 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Sekolah (Opsional)</label>
-                    <div class="input-box">
-                        <i class="fa-solid fa-school input-icon"></i>
-                        <select id="selectSekolah" class="input-control custom-select">
-                            <option value="">Pilih Asal Sekolah...</option>
-                            <option value="MAN 2 Mataram">MAN 2 Mataram</option>
-                            <option value="Lainnya">Lainnya (Tulis Sendiri)</option>
-                        </select>
-                        <i class="fa-solid fa-chevron-down chevron-icon"></i>
-                    </div>
-                    <input type="text" id="inputSekolahLainnya" class="input-control sub-input" placeholder="Tuliskan nama sekolah Anda">
-                </div>
-
-                <div class="form-group">
                     <label>Kelas</label>
                     <div class="grid-kelas" id="gridKelasContainer">
                         <div class="input-box">
@@ -452,8 +438,6 @@
     <script>
         let selectedJumlah = 0;
 
-        const selectSekolah = document.getElementById('selectSekolah');
-        const inputSekolahLainnya = document.getElementById('inputSekolahLainnya');
         const tingkatKelas = document.getElementById('tingkatKelas');
         const boxJurusan = document.getElementById('boxJurusan');
         const jurusanKelas = document.getElementById('jurusanKelas');
@@ -463,18 +447,6 @@
         const inputJumlahCustom = document.getElementById('inputJumlahCustom');
         const tampilTotal = document.getElementById('tampilTotal');
         const orderForm = document.getElementById('orderForm');
-
-        selectSekolah.addEventListener('change', function() {
-            if (this.value === 'Lainnya') {
-                inputSekolahLainnya.classList.add('active');
-                inputSekolahLainnya.focus();
-                inputSekolahLainnya.required = true;
-            } else {
-                inputSekolahLainnya.classList.remove('active');
-                inputSekolahLainnya.value = '';
-                inputSekolahLainnya.required = false;
-            }
-        });
 
         tingkatKelas.addEventListener('change', function() {
             if (this.value === '10') {
@@ -549,14 +521,6 @@
             }
 
             const nama = document.getElementById('inputNama').value.trim();
-            
-            let sekolah = selectSekolah.value;
-            if (sekolah === 'Lainnya') {
-                sekolah = inputSekolahLainnya.value.trim() || "-";
-            } else if (!sekolah) {
-                sekolah = "-";
-            }
-
             const tingkat = tingkatKelas.value;
             const jurusan = jurusanKelas.value;
             const nomor = document.getElementById('nomorKelas').value;
