@@ -168,13 +168,14 @@
             display: block;
         }
 
-        .grid-3 {
+        .grid-kelas {
             display: grid;
             grid-template-columns: 1.2fr 1.5fr 1fr;
             gap: 8px;
+            transition: all 0.3s ease;
         }
 
-        .grid-3 .input-box select {
+        .grid-kelas .input-box select {
             padding: 11px 10px;
             text-align-last: center;
         }
@@ -324,8 +325,22 @@
                 </div>
 
                 <div class="form-group">
+                    <label>Sekolah (Opsional)</label>
+                    <div class="input-box">
+                        <i class="fa-solid fa-school input-icon"></i>
+                        <select id="selectSekolah" class="input-control custom-select">
+                            <option value="">Pilih Asal Sekolah...</option>
+                            <option value="MAN 2 Mataram">MAN 2 Mataram</option>
+                            <option value="Lainnya">Lainnya (Tulis Sendiri)</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down chevron-icon"></i>
+                    </div>
+                    <input type="text" id="inputSekolahLainnya" class="input-control sub-input" placeholder="Tuliskan nama sekolah Anda">
+                </div>
+
+                <div class="form-group">
                     <label>Kelas</label>
-                    <div class="grid-3">
+                    <div class="grid-kelas" id="gridKelasContainer">
                         <div class="input-box">
                             <select id="tingkatKelas" class="input-control custom-select" required>
                                 <option value="" disabled selected>Tingkat</option>
@@ -335,7 +350,7 @@
                             </select>
                             <i class="fa-solid fa-chevron-down chevron-icon"></i>
                         </div>
-                        <div class="input-box">
+                        <div class="input-box" id="boxJurusan">
                             <select id="jurusanKelas" class="input-control custom-select" required>
                                 <option value="" disabled selected>Jurusan</option>
                                 <option value="Saintek">Saintek</option>
@@ -355,6 +370,16 @@
                                 <option value="4">4</option>
                                 <option value="5">5</option>
                                 <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                                <option value="13">13</option>
+                                <option value="14">14</option>
+                                <option value="15">15</option>
+                                <option value="16">16</option>
                             </select>
                             <i class="fa-solid fa-chevron-down chevron-icon"></i>
                         </div>
@@ -427,10 +452,42 @@
     <script>
         let selectedJumlah = 0;
 
+        const selectSekolah = document.getElementById('selectSekolah');
+        const inputSekolahLainnya = document.getElementById('inputSekolahLainnya');
+        const tingkatKelas = document.getElementById('tingkatKelas');
+        const boxJurusan = document.getElementById('boxJurusan');
+        const jurusanKelas = document.getElementById('jurusanKelas');
+        const gridKelasContainer = document.getElementById('gridKelasContainer');
+        
         const chipButtons = document.querySelectorAll('.chip-btn');
         const inputJumlahCustom = document.getElementById('inputJumlahCustom');
         const tampilTotal = document.getElementById('tampilTotal');
         const orderForm = document.getElementById('orderForm');
+
+        selectSekolah.addEventListener('change', function() {
+            if (this.value === 'Lainnya') {
+                inputSekolahLainnya.classList.add('active');
+                inputSekolahLainnya.focus();
+                inputSekolahLainnya.required = true;
+            } else {
+                inputSekolahLainnya.classList.remove('active');
+                inputSekolahLainnya.value = '';
+                inputSekolahLainnya.required = false;
+            }
+        });
+
+        tingkatKelas.addEventListener('change', function() {
+            if (this.value === '10') {
+                boxJurusan.style.display = 'none';
+                jurusanKelas.required = false;
+                jurusanKelas.value = '';
+                gridKelasContainer.style.gridTemplateColumns = '1fr 1fr';
+            } else {
+                boxJurusan.style.display = 'block';
+                jurusanKelas.required = true;
+                gridKelasContainer.style.gridTemplateColumns = '1.2fr 1.5fr 1fr';
+            }
+        });
 
         function hitungHarga(jumlah) {
             if (jumlah <= 0) return 0;
@@ -492,10 +549,24 @@
             }
 
             const nama = document.getElementById('inputNama').value.trim();
-            const tingkat = document.getElementById('tingkatKelas').value;
-            const jurusan = document.getElementById('jurusanKelas').value;
+            
+            let sekolah = selectSekolah.value;
+            if (sekolah === 'Lainnya') {
+                sekolah = inputSekolahLainnya.value.trim() || "-";
+            } else if (!sekolah) {
+                sekolah = "-";
+            }
+
+            const tingkat = tingkatKelas.value;
+            const jurusan = jurusanKelas.value;
             const nomor = document.getElementById('nomorKelas').value;
-            const kelasLengkap = `${tingkat} ${jurusan} ${nomor}`;
+            
+            let kelasLengkap = "";
+            if (tingkat === '10') {
+                kelasLengkap = `${tingkat} ${nomor}`;
+            } else {
+                kelasLengkap = `${tingkat} ${jurusan} ${nomor}`;
+            }
             
             const waktu = document.getElementById('inputWaktu').value.trim();
             const pembayaran = document.getElementById('inputPembayaran').value;
