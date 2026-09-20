@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pemesanan Pizza Mini</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #E67E22;
+            --primary-light: #FFF3E0;
+            --secondary: #2C3E50;
+            --bg: #F4F6F8;
+            --card-bg: #FFFFFF;
+            --text: #2D3748;
+            --text-muted: #718096;
+            --border: #E2E8F0;
+            --disabled: #CBD5E0;
+            --danger: #E53E3E;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 24px 16px;
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 32px 24px;
+            border-radius: 24px;
+            text-align: center;
+            max-width: 360px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            transform: scale(1);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.hidden .modal-content {
+            transform: scale(0.9);
+        }
+
+        .modal-icon {
+            font-size: 56px;
+            color: var(--danger);
+            margin-bottom: 16px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 8px;
+        }
+
+        .modal-text {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .modal-btn {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s ease;
+        }
+
+        .modal-btn:hover {
+            background-color: #1A252F;
+        }
+
+        /* Form Styles */
+        .order-container {
+            background-color: var(--card-bg);
+            width: 100%;
+            max-width: 480px;
+            border-radius: 24px;
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            position: relative;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #243342 0%, #151f28 100%);
+            color: white;
+            text-align: center;
+            padding: 28px 20px 22px;
+            position: relative;
+        }
+
+        .header::after {
+            content: "CLOSED";
+            position: absolute;
+            top: 20px;
+            right: -30px;
+            background: var(--danger);
+            color: white;
+            padding: 4px 40px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            transform: rotate(45deg);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .image-container {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 14px;
+            border-radius: 50%;
+            padding: 4px;
+            background: white;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+            filter: grayscale(0.5);
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            display: block;
+        }
+
+        .header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .price-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background-color: #718096;
+            color: white;
+            padding: 5px 14px;
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .form-content {
+            padding: 24px 22px;
+            opacity: 0.8;
+            pointer-events: none; /* Menonaktifkan klik seluruh form via CSS */
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--secondary);
+            margin-bottom: 7px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+
+        .input-box {
+            position: relative;
+        }
+
+        .input-box i.input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #A0AEC0;
+            font-size: 15px;
+        }
+
+        .input-box select.custom-select {
+            appearance: none;
+            padding-right: 36px;
+        }
+
+        .input-box .chevron-icon {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #A0AEC0;
+            font-size: 12px;
+        }
+
+        .input-control {
+            width: 100%;
+            padding: 11px 14px 11px 40px;
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            font-size: 14px;
+            color: var(--text-muted);
+            background-color: #EDF2F7; /* Warna disabled */
+            outline: none;
+            cursor: not-allowed;
+        }
+
+        .sub-input {
+            margin-top: 8px;
+            padding-left: 14px;
+            display: none;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1.2fr 1.5fr 1fr;
+            gap: 8px;
+        }
+
+        .grid-3 .input-box select {
+            padding: 11px 10px;
+            text-align-last: center;
+        }
+
+        .qty-chips {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .chip-btn {
+            background-color: #EDF2F7;
+            border: 1.5px solid var(--border);
+            padding: 8px 4px;
+            border-radius: 10px;
+            cursor: not-allowed;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.7;
+        }
+
+        .chip-btn .qty {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .chip-btn .price {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .total-box {
+            background-color: #F7FAFC;
+            border: 1.5px dashed var(--border);
+            border-radius: 14px;
+            padding: 14px;
+            text-align: center;
+            margin: 22px 0;
+        }
+
+        .total-box span {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .total-box h2 {
+            color: var(--text-muted);
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background-color: var(--disabled);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: not-allowed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .submit-btn i {
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Popup Close Order -->
+    <div class="modal-overlay" id="closeModal">
+        <div class="modal-content">
+            <i class="fa-solid fa-store-slash modal-icon"></i>
+            <h2 class="modal-title">Mohon Maaf</h2>
+            <p class="modal-text">Orderan Pizza Mini saat ini sudah ditutup. Silakan kembali lagi di lain waktu!</p>
+            <button class="modal-btn" onclick="tutupModal()">Mengerti</button>
+        </div>
+    </div>
+
+    <div class="order-container">
+        <div class="header">
+            <div class="image-container">
+                <img src="lagi pengen apa nihh.jpg" alt="Pizza Mini">
+            </div>
+            <h1>Pizza Mini</h1>
+            <div class="price-badge">
+                <i class="fa-solid fa-lock"></i> Order Ditutup
+            </div>
+        </div>
+
+        <div class="form-content">
+            <form id="orderForm">
+                <div class="form-group">
+                    <label>Nama Lengkap</label>
+                    <div class="input-box">
+                        <i class="fa-solid fa-user input-icon"></i>
+                        <input type="text" class="input-control" placeholder="Form dinonaktifkan" disabled>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Kelas</label>
+                    <div class="grid-3">
+                        <div class="input-box">
+                            <select class="input-control custom-select" disabled>
+                                <option selected>Tingkat</option>
+                            </select>
+                            <i class="fa-solid fa-chevron-down chevron-icon"></i>
+                        </div>
+                        <div class="input-box">
+                            <select class="input-control custom-select" disabled>
+                                <option selected>Jurusan</option>
+                            </select>
+                            <i class="fa-solid fa-chevron-down chevron-icon"></i>
+                        </div>
+                        <div class="input-box">
+                            <select class="input-control custom-select" disabled>
+                                <option selected>No</option>
+                            </select>
+                            <i class="fa-solid fa-chevron-down chevron-icon"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Jumlah Pesanan</label>
+                    <div class="qty-chips">
+                        <button type="button" class="chip-btn" disabled>
+                            <span class="qty">1 Slice</span>
+                            <span class="price">8k</span>
+                        </button>
+                        <button type="button" class="chip-btn" disabled>
+                            <span class="qty">2 Slice</span>
+                            <span class="price">15k</span>
+                        </button>
+                        <button type="button" class="chip-btn" disabled>
+                            <span class="qty">3 Slice</span>
+                            <span class="price">23k</span>
+                        </button>
+                        <button type="button" class="chip-btn" disabled>
+                            <span class="qty">5 Slice</span>
+                            <span class="price">38k</span>
+                        </button>
+                        <button type="button" class="chip-btn" disabled>
+                            <span class="qty">10 Slice</span>
+                            <span class="price">75k</span>
+                        </button>
+                        <button type="button" class="chip-btn" style="justify-content: center;" disabled>
+                            <span class="qty" style="margin: 0;">Lainnya</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Waktu Pengambilan</label>
+                    <div class="input-box">
+                        <i class="fa-solid fa-clock input-icon"></i>
+                        <input type="text" class="input-control" placeholder="Form dinonaktifkan" disabled>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Metode Pembayaran</label>
+                    <div class="input-box">
+                        <i class="fa-solid fa-wallet input-icon"></i>
+                        <select class="input-control custom-select" disabled>
+                            <option selected>Pilih metode...</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down chevron-icon"></i>
+                    </div>
+                </div>
+
+                <div class="total-box">
+                    <span>Total Pembayaran</span>
+                    <h2>Rp 0</h2>
+                </div>
+
+                <button type="button" class="submit-btn" disabled>
+                    <i class="fa-solid fa-ban"></i> Orderan Ditutup
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function tutupModal() {
+            document.getElementById('closeModal').classList.add('hidden');
+        }
+
+        // Mencegah form di-submit meskipun dipaksa
+        document.getElementById('orderForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Mohon maaf, orderan sudah ditutup.');
+        });
+    </script>
+
+</body>
+</html>
