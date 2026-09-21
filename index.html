@@ -16,8 +16,8 @@
             --text: #2D3748;
             --text-muted: #718096;
             --border: #E2E8F0;
-            --wa-color: #25D366;
-            --wa-hover: #1EBE5A;
+            --disabled: #CBD5E0;
+            --danger: #E53E3E;
         }
 
         * {
@@ -37,6 +37,82 @@
             padding: 24px 16px;
         }
 
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 32px 24px;
+            border-radius: 24px;
+            text-align: center;
+            max-width: 360px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            transform: scale(1);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.hidden .modal-content {
+            transform: scale(0.9);
+        }
+
+        .modal-icon {
+            font-size: 56px;
+            color: var(--danger);
+            margin-bottom: 16px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 8px;
+        }
+
+        .modal-text {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .modal-btn {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s ease;
+        }
+
+        .modal-btn:hover {
+            background-color: #1A252F;
+        }
+
+        /* Form Styles */
         .order-container {
             background-color: var(--card-bg);
             width: 100%;
@@ -45,6 +121,7 @@
             box-shadow: 0 16px 36px rgba(0, 0, 0, 0.06);
             overflow: hidden;
             border: 1px solid var(--border);
+            position: relative;
         }
 
         .header {
@@ -55,6 +132,21 @@
             position: relative;
         }
 
+        .header::after {
+            content: "CLOSED";
+            position: absolute;
+            top: 20px;
+            right: -30px;
+            background: var(--danger);
+            color: white;
+            padding: 4px 40px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            transform: rotate(45deg);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
         .image-container {
             width: 120px;
             height: 120px;
@@ -63,6 +155,7 @@
             padding: 4px;
             background: white;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+            filter: grayscale(0.5);
         }
 
         .image-container img {
@@ -84,7 +177,7 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            background-color: var(--primary);
+            background-color: #718096;
             color: white;
             padding: 5px 14px;
             border-radius: 999px;
@@ -94,6 +187,8 @@
 
         .form-content {
             padding: 24px 22px;
+            opacity: 0.8;
+            pointer-events: none; /* Menonaktifkan klik seluruh form via CSS */
         }
 
         .form-group {
@@ -121,12 +216,10 @@
             transform: translateY(-50%);
             color: #A0AEC0;
             font-size: 15px;
-            pointer-events: none;
         }
 
         .input-box select.custom-select {
             appearance: none;
-            cursor: pointer;
             padding-right: 36px;
         }
 
@@ -137,7 +230,6 @@
             transform: translateY(-50%);
             color: #A0AEC0;
             font-size: 12px;
-            pointer-events: none;
         }
 
         .input-control {
@@ -146,16 +238,10 @@
             border: 1.5px solid var(--border);
             border-radius: 12px;
             font-size: 14px;
-            color: var(--text);
-            background-color: #FAFAFA;
+            color: var(--text-muted);
+            background-color: #EDF2F7; /* Warna disabled */
             outline: none;
-            transition: all 0.2s ease;
-        }
-
-        .input-control:focus {
-            border-color: var(--primary);
-            background-color: #FFFFFF;
-            box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.15);
+            cursor: not-allowed;
         }
 
         .sub-input {
@@ -164,18 +250,13 @@
             display: none;
         }
 
-        .sub-input.active {
-            display: block;
-        }
-
-        .grid-kelas {
+        .grid-3 {
             display: grid;
             grid-template-columns: 1.2fr 1.5fr 1fr;
             gap: 8px;
-            transition: all 0.3s ease;
         }
 
-        .grid-kelas .input-box select {
+        .grid-3 .input-box select {
             padding: 11px 10px;
             text-align-last: center;
         }
@@ -192,23 +273,19 @@
             border: 1.5px solid var(--border);
             padding: 8px 4px;
             border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.2s ease;
+            cursor: not-allowed;
             text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-        }
-
-        .chip-btn:hover {
-            border-color: var(--primary);
+            opacity: 0.7;
         }
 
         .chip-btn .qty {
             font-size: 13px;
             font-weight: 700;
-            color: var(--text);
+            color: var(--text-muted);
         }
 
         .chip-btn .price {
@@ -218,39 +295,9 @@
             margin-top: 2px;
         }
 
-        .chip-btn.highlight {
-            background-color: #FFF8F0;
-            border-color: #FBD38D;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .chip-btn.highlight .price {
-            color: var(--primary);
-            font-weight: 700;
-        }
-
-        .chip-btn.active {
-            background-color: var(--primary);
-            border-color: var(--primary);
-        }
-
-        .chip-btn.active .qty,
-        .chip-btn.active .price {
-            color: white;
-        }
-
-        .chip-btn.custom-btn {
-            justify-content: center;
-        }
-
-        .chip-btn.custom-btn .qty {
-            margin-bottom: 0;
-        }
-
         .total-box {
-            background-color: var(--primary-light);
-            border: 1.5px dashed var(--primary);
+            background-color: #F7FAFC;
+            border: 1.5px dashed var(--border);
             border-radius: 14px;
             padding: 14px;
             text-align: center;
@@ -261,39 +308,32 @@
             display: block;
             font-size: 12px;
             font-weight: 500;
-            color: #A0522D;
+            color: var(--text-muted);
             margin-bottom: 2px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
         .total-box h2 {
-            color: var(--primary);
+            color: var(--text-muted);
             font-size: 24px;
             font-weight: 700;
         }
 
         .submit-btn {
             width: 100%;
-            background-color: var(--wa-color);
+            background-color: var(--disabled);
             color: white;
             border: none;
             padding: 14px;
             border-radius: 14px;
             font-size: 15px;
             font-weight: 600;
-            cursor: pointer;
+            cursor: not-allowed;
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 10px;
-            transition: all 0.2s ease;
-        }
-
-        .submit-btn:hover {
-            background-color: var(--wa-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 18px rgba(37, 211, 102, 0.25);
         }
 
         .submit-btn i {
@@ -303,6 +343,16 @@
 </head>
 <body>
 
+    <!-- Popup Close Order -->
+    <div class="modal-overlay" id="closeModal">
+        <div class="modal-content">
+            <i class="fa-solid fa-store-slash modal-icon"></i>
+            <h2 class="modal-title">Mohon Maaf</h2>
+            <p class="modal-text">Orderan Pizza Mini saat ini sudah ditutup. Silakan kembali lagi di lain waktu!</p>
+            <button class="modal-btn" onclick="tutupModal()">Mengerti</button>
+        </div>
+    </div>
+
     <div class="order-container">
         <div class="header">
             <div class="image-container">
@@ -310,7 +360,7 @@
             </div>
             <h1>Pizza Mini</h1>
             <div class="price-badge">
-                <i class="fa-solid fa-tag"></i> Rp 8.000 / Slice
+                <i class="fa-solid fa-lock"></i> Order Ditutup
             </div>
         </div>
 
@@ -320,52 +370,28 @@
                     <label>Nama Lengkap</label>
                     <div class="input-box">
                         <i class="fa-solid fa-user input-icon"></i>
-                        <input type="text" id="inputNama" class="input-control" placeholder="Masukkan nama pemesan" required>
+                        <input type="text" class="input-control" placeholder="Form dinonaktifkan" disabled>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label>Kelas</label>
-                    <div class="grid-kelas" id="gridKelasContainer">
+                    <div class="grid-3">
                         <div class="input-box">
-                            <select id="tingkatKelas" class="input-control custom-select" required>
-                                <option value="" disabled selected>Tingkat</option>
-                                <option value="10">10</option>
-                                <option value="11">11</option>
-                                <option value="12">12</option>
-                            </select>
-                            <i class="fa-solid fa-chevron-down chevron-icon"></i>
-                        </div>
-                        <div class="input-box" id="boxJurusan">
-                            <select id="jurusanKelas" class="input-control custom-select" required>
-                                <option value="" disabled selected>Jurusan</option>
-                                <option value="Saintek">Saintek</option>
-                                <option value="Soshum">Soshum</option>
-                                <option value="Sainkes">Sainkes</option>
-                                <option value="Kedinasan">Kedinasan</option>
-                                <option value="Soektis">Soektis</option>
+                            <select class="input-control custom-select" disabled>
+                                <option selected>Tingkat</option>
                             </select>
                             <i class="fa-solid fa-chevron-down chevron-icon"></i>
                         </div>
                         <div class="input-box">
-                            <select id="nomorKelas" class="input-control custom-select" required>
-                                <option value="" disabled selected>No</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                                <option value="6">6</option>
-                                <option value="7">7</option>
-                                <option value="8">8</option>
-                                <option value="9">9</option>
-                                <option value="10">10</option>
-                                <option value="11">11</option>
-                                <option value="12">12</option>
-                                <option value="13">13</option>
-                                <option value="14">14</option>
-                                <option value="15">15</option>
-                                <option value="16">16</option>
+                            <select class="input-control custom-select" disabled>
+                                <option selected>Jurusan</option>
+                            </select>
+                            <i class="fa-solid fa-chevron-down chevron-icon"></i>
+                        </div>
+                        <div class="input-box">
+                            <select class="input-control custom-select" disabled>
+                                <option selected>No</option>
                             </select>
                             <i class="fa-solid fa-chevron-down chevron-icon"></i>
                         </div>
@@ -373,40 +399,39 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Jumlah Pesanan (Maks 10)</label>
+                    <label>Jumlah Pesanan</label>
                     <div class="qty-chips">
-                        <button type="button" class="chip-btn" data-val="1">
+                        <button type="button" class="chip-btn" disabled>
                             <span class="qty">1 Slice</span>
                             <span class="price">8k</span>
                         </button>
-                        <button type="button" class="chip-btn highlight" data-val="2">
+                        <button type="button" class="chip-btn" disabled>
                             <span class="qty">2 Slice</span>
                             <span class="price">15k</span>
                         </button>
-                        <button type="button" class="chip-btn" data-val="3">
+                        <button type="button" class="chip-btn" disabled>
                             <span class="qty">3 Slice</span>
                             <span class="price">23k</span>
                         </button>
-                        <button type="button" class="chip-btn highlight" data-val="5">
+                        <button type="button" class="chip-btn" disabled>
                             <span class="qty">5 Slice</span>
                             <span class="price">38k</span>
                         </button>
-                        <button type="button" class="chip-btn highlight" data-val="10">
+                        <button type="button" class="chip-btn" disabled>
                             <span class="qty">10 Slice</span>
                             <span class="price">75k</span>
                         </button>
-                        <button type="button" class="chip-btn custom-btn" data-val="custom">
-                            <span class="qty">Lainnya</span>
+                        <button type="button" class="chip-btn" style="justify-content: center;" disabled>
+                            <span class="qty" style="margin: 0;">Lainnya</span>
                         </button>
                     </div>
-                    <input type="number" id="inputJumlahCustom" class="input-control sub-input" placeholder="Masukkan jumlah (Maks 10)" min="1" max="10">
                 </div>
 
                 <div class="form-group">
                     <label>Waktu Pengambilan</label>
                     <div class="input-box">
                         <i class="fa-solid fa-clock input-icon"></i>
-                        <input type="text" id="inputWaktu" class="input-control" placeholder="Contoh: Istirahat 1 / Jam 10.15" required>
+                        <input type="text" class="input-control" placeholder="Form dinonaktifkan" disabled>
                     </div>
                 </div>
 
@@ -414,10 +439,8 @@
                     <label>Metode Pembayaran</label>
                     <div class="input-box">
                         <i class="fa-solid fa-wallet input-icon"></i>
-                        <select id="inputPembayaran" class="input-control custom-select" required>
-                            <option value="" disabled selected>Pilih metode pembayaran...</option>
-                            <option value="QRIS">QRIS</option>
-                            <option value="Cash">Cash (Tunai)</option>
+                        <select class="input-control custom-select" disabled>
+                            <option selected>Pilih metode...</option>
                         </select>
                         <i class="fa-solid fa-chevron-down chevron-icon"></i>
                     </div>
@@ -425,123 +448,25 @@
 
                 <div class="total-box">
                     <span>Total Pembayaran</span>
-                    <h2 id="tampilTotal">Rp 0</h2>
+                    <h2>Rp 0</h2>
                 </div>
 
-                <button type="submit" class="submit-btn">
-                    <i class="fa-brands fa-whatsapp"></i> Pesan Sekarang
+                <button type="button" class="submit-btn" disabled>
+                    <i class="fa-solid fa-ban"></i> Orderan Ditutup
                 </button>
             </form>
         </div>
     </div>
 
     <script>
-        let selectedJumlah = 0;
-
-        const tingkatKelas = document.getElementById('tingkatKelas');
-        const boxJurusan = document.getElementById('boxJurusan');
-        const jurusanKelas = document.getElementById('jurusanKelas');
-        const gridKelasContainer = document.getElementById('gridKelasContainer');
-        
-        const chipButtons = document.querySelectorAll('.chip-btn');
-        const inputJumlahCustom = document.getElementById('inputJumlahCustom');
-        const tampilTotal = document.getElementById('tampilTotal');
-        const orderForm = document.getElementById('orderForm');
-
-        tingkatKelas.addEventListener('change', function() {
-            if (this.value === '10') {
-                boxJurusan.style.display = 'none';
-                jurusanKelas.required = false;
-                jurusanKelas.value = '';
-                gridKelasContainer.style.gridTemplateColumns = '1fr 1fr';
-            } else {
-                boxJurusan.style.display = 'block';
-                jurusanKelas.required = true;
-                gridKelasContainer.style.gridTemplateColumns = '1.2fr 1.5fr 1fr';
-            }
-        });
-
-        function hitungHarga(jumlah) {
-            if (jumlah <= 0) return 0;
-            const paketGenap = Math.floor(jumlah / 2);
-            const sisaGanjil = jumlah % 2;
-            return (paketGenap * 15000) + (sisaGanjil * 8000);
+        function tutupModal() {
+            document.getElementById('closeModal').classList.add('hidden');
         }
 
-        function updateTotal() {
-            if (selectedJumlah > 10) {
-                selectedJumlah = 10;
-                if (inputJumlahCustom.classList.contains('active')) {
-                    inputJumlahCustom.value = 10;
-                }
-            }
-            const total = hitungHarga(selectedJumlah);
-            tampilTotal.textContent = 'Rp ' + total.toLocaleString('id-ID');
-        }
-
-        chipButtons.forEach(btn => {
-            btn.addEventListener('click', function() {
-                chipButtons.forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-
-                const val = this.getAttribute('data-val');
-                if (val === 'custom') {
-                    inputJumlahCustom.classList.add('active');
-                    inputJumlahCustom.focus();
-                    selectedJumlah = parseInt(inputJumlahCustom.value) || 0;
-                } else {
-                    inputJumlahCustom.classList.remove('active');
-                    inputJumlahCustom.value = '';
-                    selectedJumlah = parseInt(val);
-                }
-                updateTotal();
-            });
-        });
-
-        inputJumlahCustom.addEventListener('input', function() {
-            let val = parseInt(this.value) || 0;
-            if (val > 10) {
-                val = 10;
-                this.value = 10;
-            }
-            selectedJumlah = val;
-            updateTotal();
-        });
-
-        orderForm.addEventListener('submit', function(e) {
+        // Mencegah form di-submit meskipun dipaksa
+        document.getElementById('orderForm').addEventListener('submit', function(e) {
             e.preventDefault();
-
-            if (selectedJumlah <= 0) {
-                alert('Pilih atau masukkan jumlah pesanan terlebih dahulu.');
-                return;
-            }
-            if (selectedJumlah > 10) {
-                alert('Maksimal pemesanan adalah 10 slice.');
-                return;
-            }
-
-            const nama = document.getElementById('inputNama').value.trim();
-            const tingkat = tingkatKelas.value;
-            const jurusan = jurusanKelas.value;
-            const nomor = document.getElementById('nomorKelas').value;
-            
-            let kelasLengkap = "";
-            if (tingkat === '10') {
-                kelasLengkap = `${tingkat} ${nomor}`;
-            } else {
-                kelasLengkap = `${tingkat} ${jurusan} ${nomor}`;
-            }
-            
-            const waktu = document.getElementById('inputWaktu').value.trim();
-            const pembayaran = document.getElementById('inputPembayaran').value;
-            const totalBayar = hitungHarga(selectedJumlah).toLocaleString('id-ID');
-
-            const formatPesan = `Halo, saya ingin memesan Pizza Mini!%0A%0ANama : ${nama}%0AKelas : ${kelasLengkap}%0AWaktu Diambil : ${waktu}%0AJumlah Pesanan : ${selectedJumlah} slice%0AMetode Pembayaran : ${pembayaran}%0ATotal : Rp ${totalBayar}`;
-
-            const nomorWA = "628123731343";
-            const urlWA = `https://wa.me/${nomorWA}?text=${formatPesan}`;
-
-            window.open(urlWA, '_blank');
+            alert('Mohon maaf, orderan sudah ditutup.');
         });
     </script>
 
